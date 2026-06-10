@@ -22,7 +22,7 @@ function selectIncident(type) {
     // Update active class for tag buttons
     const tags = document.querySelectorAll(".tag");
     tags.forEach(tag => {
-        if (tag.textContent.toLowerCase().includes(type.replace('_', ' '))) {
+        if (tag.getAttribute("data-incident") === type) {
             tag.classList.add("active");
         } else {
             tag.classList.remove("active");
@@ -256,20 +256,22 @@ function dispatch() {
             }
 
             // Update Support Units Response
-            if (data.support && data.support !== "No support units mapped" && data.support !== "No support units required" && !data.support.includes("busy")) {
+            if (data.support && data.support !== "No support units mapped" && data.support !== "No support units required") {
                 const supportUnits = data.support.split(', ');
+                let hasAvailable = false;
                 const unitsList = supportUnits.map(unit => {
+                    if (unit.includes("busy")) {
+                        return `<li class="support-busy">⚠️ <strong>Unavailable:</strong> ${unit}</li>`;
+                    }
                     const supportMatch = unit.match(/^([a-zA-Z0-9_]+)\s*\(([^)]+)\)$/);
                     if (supportMatch) {
                         recommendedUnits.push(supportMatch[1]);
+                        hasAvailable = true;
                     }
                     return `<li>🔷 ${formatUnitFriendly(unit, false)}</li>`;
                 }).join('');
                 supportEl.innerHTML = `<ul>${unitsList}</ul>`;
-                supportEl.className = "result-display active-support";
-            } else if (data.support && data.support.includes("busy")) {
-                supportEl.innerHTML = `⚠️ <strong>Unavailable:</strong> ${data.support}`;
-                supportEl.className = "result-display warning";
+                supportEl.className = hasAvailable ? "result-display active-support" : "result-display warning";
             } else {
                 supportEl.innerHTML = data.support === "No support units required" ? "No support units required." : "No support units mapped for this incident.";
                 supportEl.className = "result-display empty";
@@ -323,6 +325,7 @@ function hideDispatchActions() {
 function dispatchRecommended() {
     if (recommendedUnits.length === 0) return;
     
+    const severity = document.getElementById("severity") ? document.getElementById("severity").value : "normal";
     const btn = document.getElementById("btn-dispatch-recommend");
     if (btn) {
         btn.disabled = true;
@@ -338,7 +341,33 @@ function dispatchRecommended() {
         .then(() => {
             recommendedUnits = [];
             loadUnits();
-            dispatch(); // Rerun the recommendation engine (will now recommend other units or empty)
+            
+            // Clear incident input and tags
+            const incidentInput = document.getElementById("incident");
+            if (incidentInput) {
+                incidentInput.value = "";
+            }
+            const tags = document.querySelectorAll(".tag");
+            tags.forEach(tag => tag.classList.remove("active"));
+            
+            // Display structured success messages
+            const primaryEl = document.getElementById("primary");
+            if (primaryEl) {
+                primaryEl.innerHTML = "🎉 <strong>Dispatch Confirmed!</strong> The nearest responder teams have been successfully deployed to the target coordinates.";
+                primaryEl.className = "result-display active";
+            }
+            const supportEl = document.getElementById("support");
+            if (supportEl) {
+                if (severity === "critical") {
+                    supportEl.innerHTML = "🔷 <strong>Support Units Active:</strong> Coordinated backup units have been dispatched and are en route.";
+                    supportEl.className = "result-display active-support";
+                } else {
+                    supportEl.innerHTML = "No support units required.";
+                    supportEl.className = "result-display empty";
+                }
+            }
+            
+            hideDispatchActions();
         })
         .catch(err => {
             console.error("Error dispatching recommended units:", err);
@@ -489,7 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const val = this.value.trim().toLowerCase();
             const tags = document.querySelectorAll(".tag");
             tags.forEach(tag => {
-                if (tag.textContent.toLowerCase() === val) {
+                if (tag.getAttribute("data-incident") === val) {
                     tag.classList.add("active");
                 } else {
                     tag.classList.remove("active");

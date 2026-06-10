@@ -372,6 +372,12 @@ select {
     border: 1px solid var(--border-color);
 }
 
+.result-display li.support-busy {
+    background: rgba(245, 158, 11, 0.05);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    color: #b45309;
+}
+
 .result-display.error {
     background-color: rgba(239, 68, 68, 0.05);
     border: 1px solid rgba(239, 68, 68, 0.2);
