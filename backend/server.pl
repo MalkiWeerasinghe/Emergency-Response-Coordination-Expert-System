@@ -11,12 +11,29 @@
 :- consult('main.pl').
 
 % -------------------------
-% API ROUTE
+% API ROUTES
 % -------------------------
 :- http_handler('/recommend', recommend_handler, []).
+:- http_handler('/units', units_handler, []).
+:- http_handler('/dispatch', dispatch_handler, []).
+:- http_handler('/release', release_handler, []).
 
 server(Port) :-
     http_server(http_dispatch, [port(Port)]).
+
+% Helper to query status of all units
+get_all_units(UnitsList) :-
+    findall(
+        _{name: Name, type: Type, x: X, y: Y, available: IsAvailable},
+        (
+            unit(Name, Type, X, Y),
+            (   available(Name)
+            ->  IsAvailable = true
+            ;   IsAvailable = false
+            )
+        ),
+        UnitsList
+    ).
 
 recommend_handler(Request) :-
     (   option(method(options), Request)
@@ -25,20 +42,28 @@ recommend_handler(Request) :-
     ;   cors_enable,
         http_parameters(Request, [
             incident(Incident, []),
-            severity(Severity, [])
+            severity(Severity, []),
+            x(XVal, [float]),
+            y(YVal, [float])
         ]),
-        (   primary_response(Incident, Primary)
-        ->  format_unit(Primary, PrimaryStr)
-        ;   PrimaryStr = 'No primary unit'
+        (   primary_unit(Incident, PrimaryType)
+        ->  (   primary_response(Incident, XVal, YVal, Primary)
+            ->  format_unit(Primary, PrimaryStr)
+            ;   atomic_list_concat(['All ', PrimaryType, ' units are currently busy.'], PrimaryStr)
+            )
+        ;   PrimaryStr = 'No primary unit mapped'
         ),
         (   Severity = critical
-        ->  (   support_responses(Incident, SupportList),
+        ->  (   support_responses(Incident, XVal, YVal, SupportList),
                 SupportList \= []
             ->  format_units(SupportList, SupportStrs),
                 atomic_list_concat(SupportStrs, ', ', SupportStr)
-            ;   SupportStr = 'No support units'
+            ;   (   supports(_, Incident)
+                ->  SupportStr = 'All supporting units are currently busy.'
+                ;   SupportStr = 'No support units mapped'
+                )
             )
-        ;   SupportStr = 'No support units'
+        ;   SupportStr = 'No support units required'
         ),
         reply_json_dict(_{
             incident: Incident,
@@ -46,4 +71,41 @@ recommend_handler(Request) :-
             primary: PrimaryStr,
             support: SupportStr
         })
+    ).
+
+units_handler(Request) :-
+    (   option(method(options), Request)
+    ->  cors_enable(Request, [methods([get, post, options])]),
+        format('~n')
+    ;   cors_enable,
+        get_all_units(Units),
+        reply_json_dict(Units)
+    ).
+
+dispatch_handler(Request) :-
+    (   option(method(options), Request)
+    ->  cors_enable(Request, [methods([get, post, options])]),
+        format('~n')
+    ;   cors_enable,
+        http_parameters(Request, [
+            unit(Unit, [atom])
+        ]),
+        (   dispatch_unit(Unit)
+        ->  reply_json_dict(_{success: true, message: "Unit successfully dispatched"})
+        ;   reply_json_dict(_{success: false, message: "Unit is not available or does not exist"})
+        )
+    ).
+
+release_handler(Request) :-
+    (   option(method(options), Request)
+    ->  cors_enable(Request, [methods([get, post, options])]),
+        format('~n')
+    ;   cors_enable,
+        http_parameters(Request, [
+            unit(Unit, [atom])
+        ]),
+        (   release_unit(Unit)
+        ->  reply_json_dict(_{success: true, message: "Unit successfully released"})
+        ;   reply_json_dict(_{success: false, message: "Unit is already available or does not exist"})
+        )
     ).

@@ -32,40 +32,87 @@
             <h2>Dispatch Control</h2>
             <p class="section-desc">Select or enter an active incident to coordinate unit responses.</p>
             
-            <div class="input-group">
-                <label for="incident">Incident Type</label>
-                <div class="input-wrapper">
-                    <input id="incident" placeholder="e.g. fire, flood, accident..." autocomplete="off">
+            <div class="control-grid">
+                <div class="control-inputs-col">
+                    <div class="input-group">
+                        <label for="incident">Incident Type</label>
+                        <div class="input-wrapper">
+                            <input id="incident" placeholder="e.g. fire, flood, accident..." autocomplete="off">
+                        </div>
+                    </div>
+
+                    <!-- Quick Suggestions -->
+                    <div class="suggestions-group">
+                        <span class="label">Quick Select:</span>
+                        <div class="tags-container">
+                            <button type="button" class="tag" onclick="selectIncident('fire')">Fire</button>
+                            <button type="button" class="tag" onclick="selectIncident('flood')">Flood</button>
+                            <button type="button" class="tag" onclick="selectIncident('accident')">Accident</button>
+                            <button type="button" class="tag" onclick="selectIncident('gas_leak')">Gas Leak</button>
+                            <button type="button" class="tag" onclick="selectIncident('landslide')">Landslide</button>
+                            <button type="button" class="tag" onclick="selectIncident('missing_person')">Missing Person</button>
+                            <button type="button" class="tag" onclick="selectIncident('chemical_leak')">Hazmat Leak</button>
+                            <button type="button" class="tag" onclick="selectIncident('building_collapse')">Structural Collapse</button>
+                            <button type="button" class="tag" onclick="selectIncident('security_breach')">Security Breach</button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="location-preset">Select Landmark / Sector</label>
+                        <select id="location-preset" onchange="selectPresetLocation(this.value)">
+                            <option value="custom">📍 Custom Map Coordinates (Click Map)</option>
+                            <option value="25,25" selected>🏢 Central Business District (25, 25)</option>
+                            <option value="55,65">🚢 Industrial Port Zone (55, 65)</option>
+                            <option value="40,80">🏘️ North Residential Sector (40, 80)</option>
+                            <option value="50,20">✈️ South Airport Runway (50, 20)</option>
+                            <option value="80,20">🌲 East Forest Reserve (80, 20)</option>
+                            <option value="8,15">🛣️ West Highway Intersection (8, 15)</option>
+                            <option value="70,80">⛰️ Mountain Ridge Sector (70, 80)</option>
+                            <option value="30,40">🏭 Chemical Processing Plant (30, 40)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="severity">Severity Level</label>
+                        <select id="severity" onchange="dispatch()">
+                            <option value="normal">🟢 Normal Severity (Primary Only)</option>
+                            <option value="critical">🔴 Critical Severity (Primary + Support Units)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-map-col">
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>Incident Location Map</label>
+                        <p class="input-hint">Or pinpoint a location by clicking directly on the grid.</p>
+                        <div class="tactical-map-wrapper">
+                            <div class="tactical-map" id="tactical-map">
+                                <!-- Y-Axis Labels -->
+                                <div class="axis-label y-axis" style="top: 0%;">100</div>
+                                <div class="axis-label y-axis" style="top: 25%;">75</div>
+                                <div class="axis-label y-axis" style="top: 50%;">50</div>
+                                <div class="axis-label y-axis" style="top: 75%;">25</div>
+                                <div class="axis-label y-axis" style="top: 100%;">0</div>
+
+                                <!-- X-Axis Labels -->
+                                <div class="axis-label x-axis" style="left: 0%;">0</div>
+                                <div class="axis-label x-axis" style="left: 25%;">25</div>
+                                <div class="axis-label x-axis" style="left: 50%;">50</div>
+                                <div class="axis-label x-axis" style="left: 75%;">75</div>
+                                <div class="axis-label x-axis" style="left: 100%;">100</div>
+
+                                <div class="incident-crosshair" id="incident-crosshair" style="left: 25%; top: 75%;"></div>
+                            </div>
+                        </div>
+                        <div class="coordinates-hud" style="margin-bottom: 0;">
+                            🎯 TARGET COORDINATES &rarr; X: <span id="hud-x">25</span>, Y: <span id="hud-y">25</span>
+                        </div>
+                        <!-- Hidden coordinate stores for API parameters -->
+                        <input type="hidden" id="incident-x" value="25">
+                        <input type="hidden" id="incident-y" value="25">
+                    </div>
                 </div>
             </div>
-
-            <!-- Quick Suggestions -->
-            <div class="suggestions-group">
-                <span class="label">Quick Select:</span>
-                <div class="tags-container">
-                    <button type="button" class="tag" onclick="selectIncident('fire')">Fire</button>
-                    <button type="button" class="tag" onclick="selectIncident('flood')">Flood</button>
-                    <button type="button" class="tag" onclick="selectIncident('accident')">Accident</button>
-                    <button type="button" class="tag" onclick="selectIncident('gas_leak')">Gas Leak</button>
-                    <button type="button" class="tag" onclick="selectIncident('landslide')">Landslide</button>
-                    <button type="button" class="tag" onclick="selectIncident('missing_person')">Missing Person</button>
-                    <button type="button" class="tag" onclick="selectIncident('chemical_leak')">Hazmat Leak</button>
-                    <button type="button" class="tag" onclick="selectIncident('building_collapse')">Structural Collapse</button>
-                    <button type="button" class="tag" onclick="selectIncident('security_breach')">Security Breach</button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="severity">Severity Level</label>
-                <select id="severity">
-                    <option value="normal">🟢 Normal Severity (Primary Only)</option>
-                    <option value="critical">🔴 Critical Severity (Primary + Support Units)</option>
-                </select>
-            </div>
-
-            <button class="btn-dispatch" onclick="dispatch()" id="dispatch-btn">
-                <span>DISPATCH EMERGENCY COMMAND</span>
-            </button>
         </section>
 
         <!-- RESPONSE VIEW -->
@@ -88,6 +135,23 @@
                 <div class="result-content">
                     <div id="support" class="result-display empty">No active dispatch</div>
                 </div>
+            </div>
+        </section>
+
+        <!-- UNIT STATUS BOARD -->
+        <section class="card status-board-card" id="unit-status-board-card">
+            <div class="board-header">
+                <div class="board-title-group">
+                    <h2>Unit Status & Coordination Board</h2>
+                    <p class="section-desc">Track and modify active unit availability and mission statuses in real time.</p>
+                </div>
+                <button class="btn-refresh" onclick="loadUnits()" id="btn-refresh-units">
+                    <span>🔄 Refresh Status</span>
+                </button>
+            </div>
+            
+            <div class="unit-groups-container" id="unit-groups-container">
+                <!-- Unit status groups will be dynamically loaded here -->
             </div>
         </section>
     </main>

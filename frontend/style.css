@@ -102,15 +102,34 @@ body {
 
 /* Layout Grid */
 .main-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
     flex: 1;
 }
 
+/* Internal control panel grid layout */
+.control-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 32px;
+}
+
+.control-inputs-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-map-col {
+    display: flex;
+    flex-direction: column;
+}
+
 @media (max-width: 768px) {
-    .main-content {
+    .control-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
 }
 
@@ -258,9 +277,16 @@ select {
 
 /* Results Section styling */
 .results-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 768px) {
+    .results-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
 }
 
 .result-card {
@@ -390,4 +416,456 @@ select {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* UNIT STATUS & COORDINATION BOARD */
+.status-board-card {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.board-title-group h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.board-title-group .section-desc {
+    margin-bottom: 0;
+}
+
+.btn-refresh {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-refresh:hover {
+    background-color: rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: var(--primary-color);
+}
+
+.btn-refresh:active {
+    transform: scale(0.98);
+}
+
+.unit-groups-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+/* UNIT TYPE GROUPS */
+.unit-type-group {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+}
+
+.unit-type-group:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.06);
+}
+
+/* Category-specific top borders */
+.unit-type-group[data-type="fire"] { border-top: 4px solid #ef4444; }
+.unit-type-group[data-type="medical"] { border-top: 4px solid #0d9488; }
+.unit-type-group[data-type="police"] { border-top: 4px solid #3b82f6; }
+.unit-type-group[data-type="rescue"] { border-top: 4px solid #f59e0b; }
+.unit-type-group[data-type="hazmat"] { border-top: 4px solid #8b5cf6; }
+.unit-type-group[data-type="surveillance"] { border-top: 4px solid #ec4899; }
+.unit-type-group[data-type="engineering"] { border-top: 4px solid #64748b; }
+.unit-type-group[data-type="k9"] { border-top: 4px solid #10b981; }
+
+.type-group-header {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.type-group-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* UNIT ROW ITEMS */
+.unit-row-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.unit-row-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.unit-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.unit-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.1px;
+}
+
+.unit-distance {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.unit-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Status dots */
+.unit-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.unit-status-dot.available {
+    background-color: var(--success-color);
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+
+.unit-status-dot.busy {
+    background-color: var(--primary-color);
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+    animation: statusPulse 1.2s infinite;
+}
+
+/* Action button inside cards */
+.btn-card-action {
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+}
+
+.btn-card-action.dispatch {
+    background-color: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.15);
+    color: var(--primary-color);
+}
+
+.btn-card-action.dispatch:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.btn-card-action.release {
+    background-color: rgba(16, 185, 129, 0.08);
+    border-color: rgba(16, 185, 129, 0.15);
+    color: var(--success-color);
+}
+
+.btn-card-action.release:hover {
+    background-color: var(--success-color);
+    color: white;
+    border-color: var(--success-color);
+}
+
+/* Dispatch Actions inside Recommendation Cards */
+.dispatch-actions-container {
+    grid-column: 1 / -1;
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+    animation: slideIn 0.3s ease;
+}
+
+.btn-dispatch-recommend {
+    background: linear-gradient(135deg, #10b981, #0d9488);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.btn-dispatch-recommend:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+}
+
+.btn-dispatch-recommend.dispatched {
+    background: var(--text-muted);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Tactical Map Wrapper & Grid */
+.input-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: -4px;
+    margin-bottom: 8px;
+}
+
+.tactical-map-wrapper {
+    width: 100%;
+    position: relative;
+    padding-bottom: 100%; /* 1:1 square ratio */
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background-color: #ffffff; /* White background */
+    background-image: 
+        linear-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+    background-size: 10% 10%;
+    overflow: hidden;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 12px;
+}
+
+.tactical-map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+}
+
+/* Coordinates HUD indicator */
+.coordinates-hud {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.coordinates-hud span {
+    color: var(--primary-color);
+}
+
+/* Map active unit markers */
+.map-marker {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #ffffff; /* separates from grid lines and white bg */
+    box-shadow: 0 0 8px currentColor;
+    transition: all 0.2s ease;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.map-marker:hover {
+    width: 14px;
+    height: 14px;
+    z-index: 20;
+}
+
+/* Tooltip overlay styling */
+.map-marker-tooltip {
+    visibility: hidden;
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(15, 23, 42, 0.95);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.map-marker:hover .map-marker-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Marker colors matching department types */
+.map-marker[data-type="fire"] { color: #ef4444; background-color: #ef4444; }
+.map-marker[data-type="medical"] { color: #0d9488; background-color: #0d9488; }
+.map-marker[data-type="police"] { color: #3b82f6; background-color: #3b82f6; }
+.map-marker[data-type="rescue"] { color: #f59e0b; background-color: #f59e0b; }
+.map-marker[data-type="hazmat"] { color: #8b5cf6; background-color: #8b5cf6; }
+.map-marker[data-type="surveillance"] { color: #ec4899; background-color: #ec4899; }
+.map-marker[data-type="engineering"] { color: #64748b; background-color: #64748b; }
+.map-marker[data-type="k9"] { color: #10b981; background-color: #10b981; }
+
+/* Inactive (on mission) unit markers are dim and translucent */
+.map-marker.busy {
+    opacity: 0.35;
+    border: 2px dashed currentColor;
+    background-color: transparent !important;
+    box-shadow: none;
+}
+
+/* Incident Crosshair Marker */
+.incident-crosshair {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 2px dashed #ef4444;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: crosshairPulse 2s infinite ease-in-out;
+    z-index: 5;
+    color: #ef4444;
+}
+
+.incident-crosshair::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #ef4444;
+}
+
+@keyframes crosshairPulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.25);
+        opacity: 1;
+        box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+    }
+}
+
+/* Warning result card styles */
+.result-display.warning {
+    background-color: rgba(245, 158, 11, 0.05);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-left: 4px solid #f59e0b;
+    color: #b45309;
+    animation: slideIn 0.3s ease;
+}
+
+/* Unit Status Text inside row items */
+.unit-status-text {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 6px;
+    display: inline-block;
+}
+
+.unit-status-text.available {
+    color: var(--success-color);
+}
+
+.unit-status-text.busy {
+    color: var(--primary-color);
+}
+
+/* Axis Coordinates Labels on Map */
+.axis-label {
+    position: absolute;
+    font-size: 8px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.35); /* Muted slate for clean, non-obtrusive charting labels */
+    pointer-events: none;
+    user-select: none;
+    font-family: monospace;
+}
+
+.axis-label.y-axis {
+    left: 4px;
+    transform: translateY(-50%);
+}
+
+.axis-label.x-axis {
+    bottom: 4px;
+    transform: translateX(-50%);
+}
+
+/* Floating mouse tracker tooltip on map */
+.map-hover-coords {
+    position: absolute;
+    background-color: rgba(15, 23, 42, 0.85);
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    pointer-events: none;
+    z-index: 100;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: none;
+    font-family: monospace;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }

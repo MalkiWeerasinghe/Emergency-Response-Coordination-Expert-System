@@ -9,29 +9,29 @@
 % unit(Name, Type, Distance)
 % =========================================
 
-unit(fire_team_a, fire, 5).
-unit(fire_team_b, fire, 12).
+unit(fire_team_a, fire, 12, 18).
+unit(fire_team_b, fire, 45, 60).
 
-unit(medical_team_a, medical, 3).
-unit(medical_team_b, medical, 10).
+unit(medical_team_a, medical, 8, 15).
+unit(medical_team_b, medical, 30, 40).
 
-unit(police_team_a, police, 2).
-unit(police_team_b, police, 8).
+unit(police_team_a, police, 10, 10).
+unit(police_team_b, police, 50, 20).
 
-unit(rescue_team_a, rescue, 4).
-unit(rescue_team_b, rescue, 15).
+unit(rescue_team_a, rescue, 15, 25).
+unit(rescue_team_b, rescue, 70, 80).
 
-unit(hazmat_team_a, hazmat, 6).
-unit(hazmat_team_b, hazmat, 11).
+unit(hazmat_team_a, hazmat, 25, 30).
+unit(hazmat_team_b, hazmat, 60, 50).
 
-unit(drone_team_a, surveillance, 3).
-unit(drone_team_b, surveillance, 7).
+unit(drone_team_a, surveillance, 5, 5).
+unit(drone_team_b, surveillance, 40, 80).
 
-unit(engineering_team_a, engineering, 9).
-unit(engineering_team_b, engineering, 14).
+unit(engineering_team_a, engineering, 35, 10).
+unit(engineering_team_b, engineering, 80, 20).
 
-unit(k9_team_a, k9, 5).
-unit(k9_team_b, k9, 10).
+unit(k9_team_a, k9, 14, 22).
+unit(k9_team_b, k9, 55, 65).
 
 
 % =========================================

@@ -26,47 +26,55 @@ nearest([unit(_,D1), unit(N2,D2)|Rest], Best) :-
 % Example: fire -> fire_team_a
 % =========================================
 
-nearest_available(Type, unit(Name,Dist)) :-
+% =========================================
+% DYNAMIC DISTANCE CALCULATION
+% Computes Euclidean distance between coordinates
+% =========================================
 
+calculate_distance(Ux, Uy, Ix, Iy, Distance) :-
+    DistanceVal is sqrt((Ux - Ix)^2 + (Uy - Iy)^2),
+    % Format distance to 2 decimal places
+    Distance is round(DistanceVal * 100) / 100.
+
+
+% =========================================
+% FIND NEAREST AVAILABLE UNIT OF TYPE AT COORDINATES
+% =========================================
+
+nearest_available(Type, Ix, Iy, unit(Name, Dist)) :-
     findall(
-        unit(N,D),
+        unit(N, D),
         (
-            unit(N, Type, D),
-            available(N)
+            unit(N, Type, Ux, Uy),
+            available(N),
+            calculate_distance(Ux, Uy, Ix, Iy, D)
         ),
         Units
     ),
-
     Units \= [],
-
-    nearest(Units, unit(Name,Dist)).
+    nearest(Units, unit(Name, Dist)).
 
 
 % =========================================
 % PRIMARY RESPONSE (CRITICAL PATH)
 % =========================================
 
-primary_response(Incident, Primary) :-
-
+primary_response(Incident, Ix, Iy, Primary) :-
     primary_unit(Incident, Type),
-
-    nearest_available(Type, Primary).
+    nearest_available(Type, Ix, Iy, Primary).
 
 
 % =========================================
 % SUPPORT RESPONSE LIST
 % =========================================
 
-support_responses(Incident, SupportList) :-
-
+support_responses(Incident, Ix, Iy, SupportList) :-
     findall(
-        unit(Name,Dist),
-
+        unit(Name, Dist),
         (
             supports(Type, Incident),
-            nearest_available(Type, unit(Name,Dist))
+            nearest_available(Type, Ix, Iy, unit(Name, Dist))
         ),
-
         SupportList
     ).
 
@@ -77,7 +85,6 @@ support_responses(Incident, SupportList) :-
 % =========================================
 
 format_unit(unit(Name,Dist), String) :-
-
     atomic_list_concat([Name, ' (', Dist, ' km)'], String).
 
 
@@ -96,12 +103,9 @@ format_units([H|T], [S|ST]) :-
 % RECOMMENDATION ENGINE (NORMAL)
 % =========================================
 
-recommend(Incident, normal, Output) :-
-
-    primary_response(Incident, Primary),
-
+recommend(Incident, Ix, Iy, normal, Output) :-
+    primary_response(Incident, Ix, Iy, Primary),
     format_unit(Primary, PrimaryStr),
-
     atomic_list_concat(['PRIMARY: ', PrimaryStr], Output).
 
 
@@ -109,18 +113,12 @@ recommend(Incident, normal, Output) :-
 % RECOMMENDATION ENGINE (CRITICAL)
 % =========================================
 
-recommend(Incident, critical, Output) :-
-
-    primary_response(Incident, Primary),
-
-    support_responses(Incident, Supports),
-
+recommend(Incident, Ix, Iy, critical, Output) :-
+    primary_response(Incident, Ix, Iy, Primary),
+    support_responses(Incident, Ix, Iy, Supports),
     format_unit(Primary, PrimaryStr),
-
     format_units(Supports, SupportStrs),
-
     atomic_list_concat(SupportStrs, ', ', SupportText),
-
     atomic_list_concat(
         [
             'PRIMARY: ', PrimaryStr,
@@ -131,15 +129,17 @@ recommend(Incident, critical, Output) :-
 
 
 % =========================================
-% DISPATCH (OPTIONAL EXTENSION)
-% Marks unit as busy
+% DISPATCH & RELEASE COORDINATION
+% Marks unit as busy / free
 % =========================================
 
 dispatch_unit(Name) :-
+    unit(Name, _, _, _),
     available(Name),
     retract(available(Name)).
 
 
 release_unit(Name) :-
+    unit(Name, _, _, _),
     \+ available(Name),
-    assert(available(Name)).
+    assertz(available(Name)).
