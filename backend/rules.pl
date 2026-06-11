@@ -55,7 +55,8 @@ recommend(Incident, Ix, Iy, critical, Output) :-
 % Finds the closest available primary responder unit for a given incident type.
 primary_response(Incident, Ix, Iy, Primary) :-
     primary_unit(Incident, Type),
-    nearest_available(Type, Ix, Iy, Primary).
+    nearest_available(Type, Ix, Iy, Primary),!. 
+% use cut (!) to prevent Prolog from finding another possible answer 
 
 % support_responses(+Incident, +Ix, +Iy, -SupportUnitsList)
 % Finds all support units mapped to the incident (either available or busy status).
@@ -90,7 +91,8 @@ nearest_available(Type, Ix, Iy, unit(Name, Dist)) :-
         Units
     ),
     Units \= [],
-    nearest(Units, unit(Name, Dist)).
+    nearest(Units, unit(Name, Dist)),!.
+% stop searching for other mathces of this department type.
 
 
 % =============================================================================
