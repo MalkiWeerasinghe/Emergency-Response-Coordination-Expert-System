@@ -17,6 +17,7 @@
 :- http_handler('/units', units_handler, []).
 :- http_handler('/dispatch', dispatch_handler, []).
 :- http_handler('/release', release_handler, []).
+:- http_handler('/landmarks', landmarks_handler, []).
 
 server(Port) :-
     http_server(http_dispatch, [port(Port)]).
@@ -108,4 +109,17 @@ release_handler(Request) :-
         ->  reply_json_dict(_{success: true, message: "Unit successfully released"})
         ;   reply_json_dict(_{success: false, message: "Unit is already available or does not exist"})
         )
+    ).
+
+landmarks_handler(Request) :-
+    (   option(method(options), Request)
+    ->  cors_enable(Request, [methods([get, options])]),
+        format('~n')
+    ;   cors_enable,
+        findall(
+            _{name: Name, x: X, y: Y},
+            landmark(Name, X, Y),
+            Landmarks
+        ),
+        reply_json_dict(Landmarks)
     ).
