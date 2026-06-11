@@ -1,166 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Emergency Command Center - Real-time Emergency Response Coordination System.">
-    <title>Emergency Command Center</title>
+    <meta name="description"
+        content="Emergency Incident Support Coordination Command Center - Real-time Emergency Response Coordination System.">
+    <title>Emergency Incident Support Coordination Command Center</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="app-container">
-    <header class="app-header">
-        <div class="logo-area">
-            <span class="pulse-icon">🚨</span>
-            <div class="title-group">
-                <h1>Emergency Command Center</h1>
-                <p class="subtitle">Expert Dispatch & Support Coordination System</p>
-            </div>
-        </div>
-        <div class="status-indicator">
-            <span class="status-dot"></span> System Operational
-        </div>
-    </header>
-
-    <main class="main-content">
-        <!-- CONTROL PANEL -->
-        <section class="card control-panel" id="dispatch-control-card">
-            <h2>Dispatch Control</h2>
-            <p class="section-desc">Select or enter an active incident to coordinate unit responses.</p>
-            
-            <div class="control-grid">
-                <div class="control-inputs-col">
-                    <div class="input-group">
-                        <label for="incident">Incident Type</label>
-                        <div class="input-wrapper">
-                            <input id="incident" placeholder="e.g. fire, flood, accident..." autocomplete="off">
-                        </div>
-                    </div>
-
-                    <!-- Quick Suggestions -->
-                    <div class="suggestions-group">
-                        <span class="label">Quick Select:</span>
-                        <div class="tags-container">
-                            <button type="button" class="tag" data-incident="fire" onclick="selectIncident('fire')">Fire</button>
-                            <button type="button" class="tag" data-incident="flood" onclick="selectIncident('flood')">Flood</button>
-                            <button type="button" class="tag" data-incident="accident" onclick="selectIncident('accident')">Accident</button>
-                            <button type="button" class="tag" data-incident="gas_leak" onclick="selectIncident('gas_leak')">Gas Leak</button>
-                            <button type="button" class="tag" data-incident="landslide" onclick="selectIncident('landslide')">Landslide</button>
-                            <button type="button" class="tag" data-incident="missing_person" onclick="selectIncident('missing_person')">Missing Person</button>
-                            <button type="button" class="tag" data-incident="chemical_leak" onclick="selectIncident('chemical_leak')">Hazmat Leak</button>
-                            <button type="button" class="tag" data-incident="building_collapse" onclick="selectIncident('building_collapse')">Structural Collapse</button>
-                            <button type="button" class="tag" data-incident="security_breach" onclick="selectIncident('security_breach')">Security Breach</button>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="location-preset">Select Landmark / Sector</label>
-                        <select id="location-preset" onchange="selectPresetLocation(this.value)">
-                            <option value="custom">📍 Custom Map Coordinates (Click Map)</option>
-                            <option value="25,25" selected>🏢 Central Business District (25, 25)</option>
-                            <option value="55,65">🚢 Industrial Port Zone (55, 65)</option>
-                            <option value="40,80">🏘️ North Residential Sector (40, 80)</option>
-                            <option value="50,20">✈️ South Airport Runway (50, 20)</option>
-                            <option value="80,20">🌲 East Forest Reserve (80, 20)</option>
-                            <option value="8,15">🛣️ West Highway Intersection (8, 15)</option>
-                            <option value="70,80">⛰️ Mountain Ridge Sector (70, 80)</option>
-                            <option value="30,40">🏭 Chemical Processing Plant (30, 40)</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="severity">Severity Level</label>
-                        <select id="severity" onchange="dispatch()">
-                            <option value="normal">🟢 Normal Severity (Primary Only)</option>
-                            <option value="critical">🔴 Critical Severity (Primary + Support Units)</option>
-                        </select>
-                    </div>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="pulse-icon">🚨</span>
+                <div class="title-group">
+                    <h1>Emergency Response Coordination System</h1>
                 </div>
+            </div>
+            <div class="status-indicator">
+                <span class="status-dot"></span> System Operational
+            </div>
+        </header>
 
-                <div class="control-map-col">
-                    <div class="input-group" style="margin-bottom: 0;">
-                        <label>Incident Location Map</label>
-                        <p class="input-hint">Or pinpoint a location by clicking directly on the grid.</p>
-                        <div class="tactical-map-wrapper">
-                            <div class="tactical-map" id="tactical-map">
-                                <!-- Y-Axis Labels -->
-                                <div class="axis-label y-axis" style="top: 0%;">100</div>
-                                <div class="axis-label y-axis" style="top: 25%;">75</div>
-                                <div class="axis-label y-axis" style="top: 50%;">50</div>
-                                <div class="axis-label y-axis" style="top: 75%;">25</div>
-                                <div class="axis-label y-axis" style="top: 100%;">0</div>
+        <main class="main-content">
+            <!-- CONTROL PANEL -->
+            <section class="card control-panel" id="dispatch-control-card">
+                <h2>Dispatch Control</h2>
+                <p class="section-desc">Select or enter an active incident to coordinate unit responses.</p>
 
-                                <!-- X-Axis Labels -->
-                                <div class="axis-label x-axis" style="left: 0%;">0</div>
-                                <div class="axis-label x-axis" style="left: 25%;">25</div>
-                                <div class="axis-label x-axis" style="left: 50%;">50</div>
-                                <div class="axis-label x-axis" style="left: 75%;">75</div>
-                                <div class="axis-label x-axis" style="left: 100%;">100</div>
-
-                                <div class="incident-crosshair" id="incident-crosshair" style="left: 25%; top: 75%;"></div>
+                <div class="control-grid">
+                    <div class="control-inputs-col">
+                        <div class="input-group">
+                            <label for="incident">Incident Type</label>
+                            <div class="input-wrapper">
+                                <input id="incident" placeholder="e.g. fire, flood, accident..." autocomplete="off">
                             </div>
                         </div>
-                        <div class="coordinates-hud" style="margin-bottom: 0;">
-                            🎯 TARGET COORDINATES &rarr; X: <span id="hud-x">25</span>, Y: <span id="hud-y">25</span>
+
+                        <!-- Quick Suggestions -->
+                        <div class="suggestions-group">
+                            <span class="label">Quick Select:</span>
+                            <div class="tags-container">
+                                <button type="button" class="tag" data-incident="fire"
+                                    onclick="selectIncident('fire')">Fire</button>
+                                <button type="button" class="tag" data-incident="flood"
+                                    onclick="selectIncident('flood')">Flood</button>
+                                <button type="button" class="tag" data-incident="accident"
+                                    onclick="selectIncident('accident')">Accident</button>
+                                <button type="button" class="tag" data-incident="gas_leak"
+                                    onclick="selectIncident('gas_leak')">Gas Leak</button>
+                                <button type="button" class="tag" data-incident="landslide"
+                                    onclick="selectIncident('landslide')">Landslide</button>
+                                <button type="button" class="tag" data-incident="missing_person"
+                                    onclick="selectIncident('missing_person')">Missing Person</button>
+                                <button type="button" class="tag" data-incident="chemical_leak"
+                                    onclick="selectIncident('chemical_leak')">Hazmat Leak</button>
+                                <button type="button" class="tag" data-incident="building_collapse"
+                                    onclick="selectIncident('building_collapse')">Structural Collapse</button>
+                                <button type="button" class="tag" data-incident="security_breach"
+                                    onclick="selectIncident('security_breach')">Security Breach</button>
+                            </div>
                         </div>
-                        <!-- Hidden coordinate stores for API parameters -->
-                        <input type="hidden" id="incident-x" value="25">
-                        <input type="hidden" id="incident-y" value="25">
+
+                        <div class="input-group">
+                            <label for="location-preset">Select Incident Location</label>
+                            <select id="location-preset" onchange="selectPresetLocation(this.value)">
+                                <option value="custom">📍 Custom Map Coordinates (Click Map)</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="severity">Severity Level</label>
+                            <select id="severity" onchange="dispatch()">
+                                <option value="normal">🟢 Normal Severity (Primary Only)</option>
+                                <option value="critical">🔴 Critical Severity (Primary + Support Units)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-map-col">
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <label>Incident Location Map</label>
+                            <p class="input-hint">Or pinpoint a location by clicking directly on the grid.</p>
+                            <div class="tactical-map-wrapper">
+                                <div class="tactical-map" id="tactical-map">
+                                    <!-- Y-Axis Labels -->
+                                    <div class="axis-label y-axis" style="top: 0%;">100</div>
+                                    <div class="axis-label y-axis" style="top: 25%;">75</div>
+                                    <div class="axis-label y-axis" style="top: 50%;">50</div>
+                                    <div class="axis-label y-axis" style="top: 75%;">25</div>
+                                    <div class="axis-label y-axis" style="top: 100%;">0</div>
+
+                                    <!-- X-Axis Labels -->
+                                    <div class="axis-label x-axis" style="left: 0%;">0</div>
+                                    <div class="axis-label x-axis" style="left: 25%;">25</div>
+                                    <div class="axis-label x-axis" style="left: 50%;">50</div>
+                                    <div class="axis-label x-axis" style="left: 75%;">75</div>
+                                    <div class="axis-label x-axis" style="left: 100%;">100</div>
+
+                                    <div class="incident-crosshair" id="incident-crosshair"
+                                        style="left: 25%; top: 75%;"></div>
+                                </div>
+                            </div>
+                            <div class="coordinates-hud" style="margin-bottom: 0;">
+                                🎯 TARGET COORDINATES &rarr; X: <span id="hud-x">25</span>, Y: <span
+                                    id="hud-y">25</span>
+                            </div>
+                            <!-- Hidden coordinate stores for API parameters -->
+                            <input type="hidden" id="incident-x" value="25">
+                            <input type="hidden" id="incident-y" value="25">
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- RESPONSE VIEW -->
-        <section class="results-section">
-            <div class="card result-card" id="primary-response-card">
-                <div class="card-header">
-                    <span class="badge badge-primary">PRIMARY</span>
-                    <h2>Primary Response</h2>
+            <!-- RESPONSE VIEW -->
+            <section class="results-section">
+                <div class="card result-card" id="primary-response-card">
+                    <div class="card-header">
+                        <span class="badge badge-primary">PRIMARY</span>
+                        <h2>Primary Response</h2>
+                    </div>
+                    <div class="result-content">
+                        <div id="primary" class="result-display empty">No active dispatch</div>
+                    </div>
                 </div>
-                <div class="result-content">
-                    <div id="primary" class="result-display empty">No active dispatch</div>
-                </div>
-            </div>
 
-            <div class="card result-card" id="support-response-card">
-                <div class="card-header">
-                    <span class="badge badge-support">SUPPORT</span>
-                    <h2>Support Units</h2>
+                <div class="card result-card" id="support-response-card">
+                    <div class="card-header">
+                        <span class="badge badge-support">SUPPORT</span>
+                        <h2>Support Units</h2>
+                    </div>
+                    <div class="result-content">
+                        <div id="support" class="result-display empty">No active dispatch</div>
+                    </div>
                 </div>
-                <div class="result-content">
-                    <div id="support" class="result-display empty">No active dispatch</div>
+            </section>
+
+            <!-- UNIT STATUS BOARD -->
+            <section class="card status-board-card" id="unit-status-board-card">
+                <div class="board-header">
+                    <div class="board-title-group">
+                        <h2>Unit Status & Coordination Board</h2>
+                        <p class="section-desc">Track and modify active unit availability and mission statuses in real
+                            time.</p>
+                    </div>
+                    <button class="btn-refresh" onclick="loadUnits()" id="btn-refresh-units">
+                        <span>🔄 Refresh Status</span>
+                    </button>
                 </div>
-            </div>
-        </section>
 
-        <!-- UNIT STATUS BOARD -->
-        <section class="card status-board-card" id="unit-status-board-card">
-            <div class="board-header">
-                <div class="board-title-group">
-                    <h2>Unit Status & Coordination Board</h2>
-                    <p class="section-desc">Track and modify active unit availability and mission statuses in real time.</p>
+                <div class="unit-groups-container" id="unit-groups-container">
+                    <!-- Unit status groups will be dynamically loaded here -->
                 </div>
-                <button class="btn-refresh" onclick="loadUnits()" id="btn-refresh-units">
-                    <span>🔄 Refresh Status</span>
-                </button>
-            </div>
-            
-            <div class="unit-groups-container" id="unit-groups-container">
-                <!-- Unit status groups will be dynamically loaded here -->
-            </div>
-        </section>
-    </main>
+            </section>
+        </main>
 
-    <footer class="app-footer">
-        <p>&copy; 2026 Emergency Response Expert System. Prepared for live coordination.</p>
-    </footer>
-</div>
+        <footer class="app-footer">
+            <p>&copy; 2026 Emergency Response Expert System. Prepared for live coordination.</p>
+        </footer>
+    </div>
 
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
+
 </html>

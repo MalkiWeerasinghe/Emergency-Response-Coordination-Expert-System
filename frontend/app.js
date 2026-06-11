@@ -507,9 +507,39 @@ function setupTacticalMap() {
     });
 }
 
+// Load landmarks from the backend and populate the select dropdown
+function loadLandmarks() {
+    const presetSelect = document.getElementById("location-preset");
+    if (!presetSelect) return;
+
+    fetch("http://localhost:8080/landmarks")
+        .then(res => {
+            if (!res.ok) throw new Error("Could not fetch landmarks");
+            return res.json();
+        })
+        .then(landmarks => {
+            // We keep the "Custom Map Coordinates" option, which is already there
+            landmarks.forEach(landmark => {
+                const option = document.createElement("option");
+                option.value = `${landmark.x},${landmark.y}`;
+                option.textContent = `📍 ${landmark.name} (${landmark.x}, ${landmark.y})`;
+                presetSelect.appendChild(option);
+            });
+            // Optionally, select the first landmark as default
+            if (landmarks.length > 0) {
+                presetSelect.value = `${landmarks[0].x},${landmarks[0].y}`;
+                selectPresetLocation(presetSelect.value);
+            }
+        })
+        .catch(err => {
+            console.error("Error loading landmarks:", err);
+        });
+}
+
 // Add event listeners and load page contents
 document.addEventListener("DOMContentLoaded", () => {
     loadUnits();
+    loadLandmarks();
     setupTacticalMap();
 
     const incidentInput = document.getElementById("incident");
