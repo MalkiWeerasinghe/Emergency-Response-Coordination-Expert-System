@@ -6,7 +6,7 @@
 
 % =========================================
 % UNITS
-% unit(Name, Type, Distance)
+% unit(Name, Type, X_Coordinate, Y_Coordinate)
 % =========================================
 
 unit(fire_team_a, fire, 12, 18).
@@ -46,6 +46,28 @@ available(hazmat_team_a).
 available(drone_team_a).
 available(engineering_team_a).
 available(k9_team_a).
+available(fire_team_b).
+available(medical_team_b).
+available(police_team_b).
+available(rescue_team_b).
+available(hazmat_team_b).
+available(drone_team_b).
+available(engineering_team_b).
+available(k9_team_b).
+
+% =========================================
+% LANDMARKS
+% landmark(Name, X_Coordinate, Y_Coordinate)
+% =========================================
+
+landmark('Central Business District', 25, 25).
+landmark('Industrial Port Zone', 55, 65).
+landmark('North Residential Sector', 40, 80).
+landmark('South Airport Runway', 50, 20).
+landmark('East Forest Reserve', 80, 20).
+landmark('West Highway Intersection', 8, 15).
+landmark('Mountain Ridge Sector', 70, 80).
+landmark('Chemical Processing Plant', 30, 40).
 
 
 % =========================================
